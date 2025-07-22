@@ -28,6 +28,10 @@ exports_files(
 config_setting(
     name = "windows",
     constraint_values = ["@platforms//os:windows"],
+    visibility = [
+        "//upb:__subpackages__",
+        "//upb_generator:__subpackages__",
+    ],
 )
 
 bool_flag(
@@ -39,6 +43,10 @@ bool_flag(
 config_setting(
     name = "fasttable_enabled_setting",
     flag_values = {"//upb:fasttable_enabled": "true"},
+    visibility = [
+        "//upb:__subpackages__",
+        "//upb_generator:__subpackages__",
+    ],
 )
 
 upb_proto_library_copts(
