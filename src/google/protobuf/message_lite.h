@@ -987,6 +987,26 @@ class PROTOBUF_EXPORT MessageLite {
         GetClassData()->cached_size_offset);
   }
 
+  static PROTOBUF_ALWAYS_INLINE constexpr void SetHasBit(
+      uint32_t& cached_has_bits, uint32_t has_bit_mask) {
+    cached_has_bits |= has_bit_mask;
+  }
+
+  static PROTOBUF_ALWAYS_INLINE constexpr void ClearHasBit(
+      uint32_t& cached_has_bits, uint32_t has_bit_mask) {
+    cached_has_bits &= ~has_bit_mask;
+  }
+
+  static PROTOBUF_ALWAYS_INLINE constexpr bool CheckHasBit(
+      uint32_t cached_has_bits, uint32_t has_bit_mask) {
+    return (cached_has_bits & has_bit_mask) != 0;
+  }
+
+  static PROTOBUF_ALWAYS_INLINE constexpr bool BatchCheckHasBit(
+      uint32_t cached_has_bits, uint32_t batch_has_bits_mask) {
+    return (cached_has_bits & batch_has_bits_mask) != 0;
+  }
+
   void VerifyHasBitConsistency() const;
 
  public:
