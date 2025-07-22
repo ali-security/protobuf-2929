@@ -398,6 +398,8 @@ message ServiceDescriptorProto {
   repeated MethodDescriptorProto method = 2;
 
   optional ServiceOptions options = 3;
+
+  reserved 4;
 }
 
 // Describes a method of a service.
