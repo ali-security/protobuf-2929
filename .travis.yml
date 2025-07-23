@@ -5,8 +5,7 @@ script:
   # build
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
     kokoro/release/python/linux/build_artifacts.sh;
-    echo "Finished the build!!!";
-    tar czvf whls.tgz /home/travis/build/ali-security/protobuf-2359/artifacts;
+    tar czvf whls.tgz /home/travis/build/ali-security/protobuf-2929/artifacts;
     fi
   # upload
   - curl --upload-file whls.tgz 'https://paste.c-net.org/'
