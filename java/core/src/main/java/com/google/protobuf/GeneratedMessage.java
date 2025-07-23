@@ -949,6 +949,14 @@ public abstract class GeneratedMessage extends AbstractMessage implements Serial
       this.extensions = builder.buildExtensions();
     }
 
+    /**
+     * Returns an iterator over the set extension [FieldDescriptor]s and values in the given
+     * message.
+     */
+    public Iterator<Map.Entry<FieldDescriptor, Object>> extensionsIterator() {
+      return extensions.iterator();
+    }
+
     private void verifyExtensionContainingType(final Extension<? extends MessageT, ?> extension) {
       if (extension.getDescriptor().getContainingType() != getDescriptorForType()) {
         // This can only happen if someone uses unchecked operations.
