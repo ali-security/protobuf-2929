@@ -8,16 +8,14 @@
 package com.google.protobuf.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.math.IntMath.checkedAdd;
-import static com.google.common.math.IntMath.checkedSubtract;
-import static com.google.common.math.LongMath.checkedAdd;
-import static com.google.common.math.LongMath.checkedMultiply;
-import static com.google.common.math.LongMath.checkedSubtract;
 import static com.google.protobuf.util.Timestamps.MICROS_PER_SECOND;
 import static com.google.protobuf.util.Timestamps.MILLIS_PER_SECOND;
 import static com.google.protobuf.util.Timestamps.NANOS_PER_MICROSECOND;
 import static com.google.protobuf.util.Timestamps.NANOS_PER_MILLISECOND;
 import static com.google.protobuf.util.Timestamps.NANOS_PER_SECOND;
+import static java.lang.Math.addExact;
+import static java.lang.Math.multiplyExact;
+import static java.lang.Math.subtractExact;
 
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.J2ktIncompatible;
@@ -34,6 +32,7 @@ import java.util.Comparator;
  * Utilities to help create/manipulate {@code protobuf/duration.proto}. All operations throw an
  * {@link IllegalArgumentException} if the input(s) are not {@linkplain #isValid(Duration) valid}.
  */
+@SuppressWarnings("Java8ApiChecker")
 public final class Durations {
   static final long DURATION_SECONDS_MIN = -315576000000L;
   static final long DURATION_SECONDS_MAX = 315576000000L;
@@ -304,7 +303,7 @@ public final class Durations {
   @SuppressWarnings("GoodTime") // this is a legacy conversion API
   public static Duration fromDays(long days) {
     return Duration.newBuilder()
-        .setSeconds(checkedMultiply(days, SECONDS_PER_DAY))
+        .setSeconds(multiplyExact(days, SECONDS_PER_DAY))
         .setNanos(0)
         .build();
   }
@@ -313,7 +312,7 @@ public final class Durations {
   @SuppressWarnings("GoodTime") // this is a legacy conversion API
   public static Duration fromHours(long hours) {
     return Duration.newBuilder()
-        .setSeconds(checkedMultiply(hours, SECONDS_PER_HOUR))
+        .setSeconds(multiplyExact(hours, SECONDS_PER_HOUR))
         .setNanos(0)
         .build();
   }
@@ -322,7 +321,7 @@ public final class Durations {
   @SuppressWarnings("GoodTime") // this is a legacy conversion API
   public static Duration fromMinutes(long minutes) {
     return Duration.newBuilder()
-        .setSeconds(checkedMultiply(minutes, SECONDS_PER_MINUTE))
+        .setSeconds(multiplyExact(minutes, SECONDS_PER_MINUTE))
         .setNanos(0)
         .build();
   }
@@ -419,8 +418,8 @@ public final class Durations {
   @SuppressWarnings("GoodTime") // this is a legacy conversion API
   public static long toMillis(Duration duration) {
     checkValid(duration);
-    return checkedAdd(
-        checkedMultiply(duration.getSeconds(), MILLIS_PER_SECOND),
+    return addExact(
+        multiplyExact(duration.getSeconds(), MILLIS_PER_SECOND),
         duration.getNanos() / NANOS_PER_MILLISECOND);
   }
 
@@ -431,8 +430,8 @@ public final class Durations {
   @SuppressWarnings("GoodTime") // this is a legacy conversion API
   public static long toMicros(Duration duration) {
     checkValid(duration);
-    return checkedAdd(
-        checkedMultiply(duration.getSeconds(), MICROS_PER_SECOND),
+    return addExact(
+        multiplyExact(duration.getSeconds(), MICROS_PER_SECOND),
         duration.getNanos() / NANOS_PER_MICROSECOND);
   }
 
@@ -440,8 +439,7 @@ public final class Durations {
   @SuppressWarnings("GoodTime") // this is a legacy conversion API
   public static long toNanos(Duration duration) {
     checkValid(duration);
-    return checkedAdd(
-        checkedMultiply(duration.getSeconds(), NANOS_PER_SECOND), duration.getNanos());
+    return addExact(multiplyExact(duration.getSeconds(), NANOS_PER_SECOND), duration.getNanos());
   }
 
   // Math operations
@@ -451,7 +449,7 @@ public final class Durations {
     checkValid(d1);
     checkValid(d2);
     return normalizedDuration(
-        checkedAdd(d1.getSeconds(), d2.getSeconds()), checkedAdd(d1.getNanos(), d2.getNanos()));
+        addExact(d1.getSeconds(), d2.getSeconds()), addExact(d1.getNanos(), d2.getNanos()));
   }
 
   /** Subtract a duration from another. */
@@ -459,13 +457,13 @@ public final class Durations {
     checkValid(d1);
     checkValid(d2);
     return normalizedDuration(
-        checkedSubtract(d1.getSeconds(), d2.getSeconds()),
-        checkedSubtract(d1.getNanos(), d2.getNanos()));
+        subtractExact(d1.getSeconds(), d2.getSeconds()),
+        subtractExact(d1.getNanos(), d2.getNanos()));
   }
 
   static Duration normalizedDuration(long seconds, int nanos) {
     if (nanos <= -NANOS_PER_SECOND || nanos >= NANOS_PER_SECOND) {
-      seconds = checkedAdd(seconds, nanos / NANOS_PER_SECOND);
+      seconds = addExact(seconds, nanos / NANOS_PER_SECOND);
       nanos %= NANOS_PER_SECOND;
     }
     if (seconds > 0 && nanos < 0) {
